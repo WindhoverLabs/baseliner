@@ -7,7 +7,7 @@ buildliner_add_table(
     INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/src/
 )
 
-buildliner_add_app_def_src(${APP_NAME} SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/tables/ci_config.c)
+buildliner_add_app_unit_test_src(${APP_NAME} SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/tables/ci_config.c)
 
 buildliner_add_app_unit_test(ci-custom-ut
     UTASSERT  

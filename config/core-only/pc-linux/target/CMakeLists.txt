@@ -39,11 +39,5 @@ buildliner_initialize(
 
     STARTUP_SCRIPT
         ${CMAKE_CURRENT_SOURCE_DIR}/cfe_es_startup.scr
-    
-    CONFIG_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../../shared/inc/cfe_mission_cfg.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../../shared/inc/cfe_msgids.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../inc/osconfig.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../inc/cfe_platform_cfg.h
 )
 

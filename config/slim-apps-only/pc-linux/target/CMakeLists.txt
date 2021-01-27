@@ -24,9 +24,6 @@ buildliner_add_app(
     CONFIG     ${CMAKE_CURRENT_SOURCE_DIR}/apps/sch
     CONFIG_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/apps/sch/sch_custom.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/../inc/sch_platform_cfg.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../inc/sch_msgids.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../../shared/inc/sch_perfids.h
 )
 
 buildliner_add_app(
@@ -35,10 +32,6 @@ buildliner_add_app(
     CONFIG     ${CMAKE_CURRENT_SOURCE_DIR}/apps/ci
     CONFIG_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/apps/ci/ci_custom.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/../inc/ci_platform_cfg.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../inc/ci_msgids.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../../shared/inc/ci_mission_cfg.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../../shared/inc/ci_perfids.h
 )
 
 buildliner_add_app(
@@ -48,9 +41,4 @@ buildliner_add_app(
     CONFIG_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/apps/to/tables/to_backup_cfg.c
         ${CMAKE_CURRENT_SOURCE_DIR}/apps/to/to_custom.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/apps/to/to_custom_udp.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../inc/to_platform_cfg.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../inc/to_msgids.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../../shared/inc/to_mission_cfg.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../../shared/inc/to_perfids.h
 )
