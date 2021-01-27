@@ -1,6 +1,6 @@
 #############################################################################
 #
-#   Copyright (c) 2017 Windhover Labs, L.L.C. All rights reserved.
+#   Copyright (c) 2021 Windhover Labs, L.L.C. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,14 +31,18 @@
 #
 #############################################################################
 
+SPHINX_OPTS     ?=
+SPHINX_BUILD    ?= sphinx-build
+SPHINX_SOURCEDIR = .
+SPHINX_BUILDDIR  = build/reference/default/target/docs
+SPHINX_FSW_BUILD = reference/default
+
 SHELL := /bin/bash
 
 CONFIG_DIR   := config
 TARGET_NAMES := core-only/pc-linux slim/pc-linux slim-apps-only/pc-linux full/pc-linux full-apps-only/pc-linux 
 BUILD_TYPES  := host target
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-LOCAL_GIT_FOLDER_DIR  := ~/gitsource
-LIB_DIR := ~/xsdk-workspace/firmware_r5_0_bsp/psu_cortexr5_0/lib
 
 export PROJECT_SOURCE_DIR=${PWD}
 
@@ -55,16 +59,20 @@ help::
 	@echo '                              on a PC.                                          '
 	@echo '    slim/pc-linux           : This builds the simplest, most basic build with   '
 	@echo '                              the Core Binary and applications for scheduling,  '
-	@echo '                              commanding, and telemetry.                        '  
+	@echo '                              commanding, and telemetry.                        '
 	@echo '    slim-apps-only/pc-linux : This builds the simplest, most basic build with   '
 	@echo '                              the Core Binary and applications for scheduling,  '
-	@echo '                              commanding, and telemetry.                        ' 
+	@echo '                              commanding, and telemetry.                        '
 	@echo '    full/pc-linux           : This builds a full compliment of the Core Binary  '
 	@echo '                              and the most common apps for all targets and      '
 	@echo '                              use cases.                                        '
 	@echo '    full-apps-only/pc-linux : This builds a full compliment of the Core Binary  '
 	@echo '                              and the most common apps for all targets and      '
 	@echo '                              use cases.                                        '
+	@echo '    reference               : This is a reference build used to generate        '
+	@echo '                              documentation. This will use platform and mission '
+	@echo '                              configuration header files from the components    '
+	@echo '                              source directory, i.e. apps/sch/fsw/mission_inc.  '
 	@echo '    clean                   : This will clean all build flight software build   '
 	@echo '                              targets.  This includes the Commander workspace,  '
 	@echo '                              if one was generated.                             '
@@ -74,9 +82,17 @@ help::
 	@echo '                              the "venv" directory with all the python          '
 	@echo '                              modules required to use the Buildliner build      '
 	@echo '                              system.                                           '
+	@echo '                                                                                '
+	@echo '  Documentation                                                                 '
+	@echo '    docs                    : Generate all documentation from the reference     '
+	@echo '                              build.                                            '
+	@echo '    docs-doxygen            : Generate only the Doxygen documentation from the  '
+	@echo '                              reference build.                                  '
+	@echo '    docs-sphinx             : Generate the Sphinx documentation from the        '
+	@echo '                              reference build.                                  '
        
 	
-.PHONY: help Makefile
+.PHONY: help Makefile docs
 	
 
 $(TARGET_NAMES)::
@@ -105,6 +121,25 @@ $(TARGET_NAMES)::
 		fi; \
 	done;
 	
+docs-doxygen: 
+	@echo 'Updating submodules'
+	git submodule update --init --recursive
+	mkdir -p build/${SPHINX_FSW_BUILD}/target; \
+	(cd build/${SPHINX_FSW_BUILD}/target; cmake -DBUILDNAME:STRING=${SPHINX_FSW_BUILD} -DBUILDTYPE:STRING=target \
+		-G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE CMAKE_BUILD_TYPE=Debug $(ROOT_DIR); make docs);
+	
+docs-sphinx: 
+	@echo 'Updating submodules'
+	git submodule update --init --recursive
+	@echo 'Building $$SPHINX_FSW_BUILD.'
+	mkdir -p build/${SPHINX_FSW_BUILD}/target; \
+	(cd build/${SPHINX_FSW_BUILD}/target; cmake -DBUILDNAME:STRING=${SPHINX_FSW_BUILD} -DBUILDTYPE:STRING=target \
+		-G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE CMAKE_BUILD_TYPE=Debug $(ROOT_DIR));
+	@$(SPHINX_BUILD) -M html "$(SOURCE_DIR)" "$(SPHINX_BUILDDIR)" $(SPHINX_OPTS) -c build/$(SPHINX_FSW_BUILD)/target/docs $(O)
+	@echo 'Completed'
+	
+docs: docs-doxygen docs-sphinx
+	@echo 'Completed'
 
 python-env::
 	virtualenv -p python3 venv || exit -1
