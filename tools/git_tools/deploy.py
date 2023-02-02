@@ -106,7 +106,7 @@ def add_module(module_name, prefix, config):
                 print('Retry attempt',attempt)
             else:
                 break
-        if attempt >= max_retry
+        if attempt >= max_retry:
             print('*****************************************')
             return -1;
     elif strategy == 'submodule':
@@ -121,7 +121,7 @@ def add_module(module_name, prefix, config):
                 print('Retry attempt',attempt)
             else:
                 break
-        if attempt >= max_retry
+        if attempt >= max_retry:
             print('*****************************************')
             return -1;
             
@@ -136,7 +136,7 @@ def add_module(module_name, prefix, config):
                 print('Retry attempt',attempt)
             else:
                 break
-        if attempt >= max_retry
+        if attempt >= max_retry:
             print('*****************************************')
             return -1;
             
@@ -151,7 +151,7 @@ def add_module(module_name, prefix, config):
                 print('Retry attempt',attempt)
             else:
                 break
-        if attempt >= max_retry
+        if attempt >= max_retry:
             print('*****************************************')
             return -1;
             
@@ -166,7 +166,7 @@ def add_module(module_name, prefix, config):
                 print('Retry attempt',attempt)
             else:
                 break
-        if attempt >= max_retry
+        if attempt >= max_retry:
             print('*****************************************')
             return -1;
             
@@ -181,7 +181,7 @@ def add_module(module_name, prefix, config):
                 print('Retry attempt',attempt)
             else:
                 break
-        if attempt >= max_retry
+        if attempt >= max_retry:
             print('*****************************************')
             return -1;
     else:
