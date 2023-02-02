@@ -104,7 +104,7 @@ def add_module(module_name, prefix, config):
                 print('error:  rc =',return_code)
                 attempt = attempt + 1
                 print('Retry attempt',attempt)
-            else
+            else:
                 break
         if attempt >= max_retry
             print('*****************************************')
@@ -119,7 +119,7 @@ def add_module(module_name, prefix, config):
                 print('error:  rc =',return_code)
                 attempt = attempt + 1
                 print('Retry attempt',attempt)
-            else
+            else:
                 break
         if attempt >= max_retry
             print('*****************************************')
@@ -134,7 +134,7 @@ def add_module(module_name, prefix, config):
                 print('error:  rc =',return_code)
                 attempt = attempt + 1
                 print('Retry attempt',attempt)
-            else
+            else:
                 break
         if attempt >= max_retry
             print('*****************************************')
@@ -149,7 +149,7 @@ def add_module(module_name, prefix, config):
                 print('error:  rc =',return_code)
                 attempt = attempt + 1
                 print('Retry attempt',attempt)
-            else
+            else:
                 break
         if attempt >= max_retry
             print('*****************************************')
@@ -164,7 +164,7 @@ def add_module(module_name, prefix, config):
                 print('error:  rc =',return_code)
                 attempt = attempt + 1
                 print('Retry attempt',attempt)
-            else
+            else:
                 break
         if attempt >= max_retry
             print('*****************************************')
@@ -179,7 +179,7 @@ def add_module(module_name, prefix, config):
                 print('error:  rc =',return_code)
                 attempt = attempt + 1
                 print('Retry attempt',attempt)
-            else
+            else:
                 break
         if attempt >= max_retry
             print('*****************************************')
