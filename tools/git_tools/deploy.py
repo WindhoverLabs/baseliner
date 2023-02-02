@@ -85,46 +85,54 @@ def add_module(module_name, prefix, config):
     # Add the module repo
     if strategy == 'subtree':
         remote_name = prefix + module_name
+        print("git", "remote", "add", "-f", remote_name, url)
         return_code = subprocess.call(["git", "remote", "add", "-f", remote_name, url])
         if return_code != 0:
             print('')
-            print('error:  rc=' + return_code)
+            print('error:  rc =',return_code)
             print('*****************************************')
             return -1;
-        return_code = subprocess.call(["git", "subtree", "add", "--prefix", path, remote_name, branch, "--squash"])
+        print("git", "subtree", "add", "--prefix", path, remote_name, branch)
+        return_code = subprocess.call(["git", "subtree", "add", "--prefix", path, remote_name, branch])
         if return_code != 0:
             print('')
+            print('error:  rc =',return_code)
             print('*****************************************')
             return -1;
     elif strategy == 'submodule':
+        print("git", "submodule", "add", "-f", url, path)
         return_code = subprocess.call(["git", "submodule", "add", "-f", url, path])
         if return_code != 0:
             print('')
-            print('error:  rc=' + return_code)
+            print('error:  rc =',return_code)
             print('*****************************************')
             return -1;
+        print("git", "submodule", "init")
         return_code = subprocess.call(["git", "submodule", "init"])
         if return_code != 0:
             print('')
-            print('error:  rc=' + return_code)
+            print('error:  rc =',return_code)
             print('*****************************************')
             return -1;
+        print("git", "checkout", branch)
         return_code = subprocess.call(["git", "checkout", branch], cwd=path)
         if return_code != 0:
             print('')
-            print('error:  rc=' + return_code)
+            print('error:  rc =',return_code)
             print('*****************************************')
             return -1;
+        print("git", "add", path)
         return_code = subprocess.call(["git", "add", path])
         if return_code != 0:
             print('')
-            print('error:  rc=' + return_code)
+            print('error:  rc =',return_code)
             print('*****************************************')
             return -1;
+        print("git", "commit", "-m", "Added submodule '" + path + "'")
         return_code = subprocess.call(["git", "commit", "-m", "Added submodule '" + path + "'"])
         if return_code != 0:
             print('')
-            print('error:  rc=' + return_code)
+            print('error:  rc =',return_code)
             print('*****************************************')
             return -1;
     else:
