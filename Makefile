@@ -40,7 +40,9 @@ SPHINX_FSW_BUILD = reference/default
 SHELL := /bin/bash
 
 CONFIG_DIR   := config
-TARGET_NAMES := core-only/pc-linux slim/pc-linux slim-apps-only/pc-linux full/pc-linux full-apps-only/pc-linux 
+GENERIC_TARGET_PATHS :=  $(shell find ${CONFIG_DIR} -mindepth 2 -maxdepth 20 -type f -name 'wh_config.yaml' | sed -r 's,^[^/]*/,,' | sed -r 's|/[^/]+$$||' | sort -u)
+GENERIC_TARGET_NAMES := $(shell echo ${GENERIC_TARGET_PATHS} )
+#TARGET_NAMES := core-only/pc-linux slim/pc-linux slim-apps-only/pc-linux full/pc-linux full-apps-only/pc-linux 
 BUILD_TYPES  := host target
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -77,13 +79,23 @@ help::
 	@echo '                              targets.  This includes the Commander workspace,  '
 	@echo '                              if one was generated.                             '
 	@echo '                                                                                '
+	@echo '                                                                                '
 	@echo '  Utilities                                                                     '
 	@echo '    python-env              : This generates a Python3 virtual environment in   '
 	@echo '                              the "venv" directory with all the python          '
 	@echo '                              modules required to use the Buildliner build      '
 	@echo '                              system.                                           '
+	@echo '    submodule-update        : This just updates all submodules.                 '
+	@echo '                                                                                '
 	@echo '                                                                                '
 	@echo '  Documentation                                                                 '
+	@echo '    reference               : This will build the reference version of the      '
+	@echo '                              flight software, primarily used for documentation '
+	@echo '                              purposes.  This will build using platform and     '
+	@echo '                              mission configuration header files defined in the '
+	@echo '                              respective source directories, i.e.               '
+	@echo '                                  apps/sch/fsw/mission_inc,                     '
+	@echo '                                  apps/sch/fsw/platform_inc                     '
 	@echo '    docs                    : Generate all documentation from the reference     '
 	@echo '                              build.                                            '
 	@echo '    docs-doxygen            : Generate only the Doxygen documentation from the  '
@@ -95,32 +107,32 @@ help::
 .PHONY: help Makefile docs
 	
 
-$(TARGET_NAMES)::
+$(GENERIC_TARGET_NAMES)::
 	@echo 'Building '$@'.'
 	@idx=1; \
-	for name in $(TARGET_NAMES); do \
+	for name in $(GENERIC_TARGET_NAMES); do \
 		if [ "$$name" == "$@" ] ; then \
 			break; \
 		fi; \
 		((idx++)); \
 	done; \
-	TARGET_NAME=$$(echo ${TARGET_NAMES} | cut -d " " -f $$idx); \
-		echo "Generating complete design/configuration definition file, 'wh_defs.yaml'"; \
-	echo "$(CONFIG_DIR)/$$TARGET_NAME/wh_config.yaml"; \
-	if [ -f "$(CONFIG_DIR)/$$TARGET_NAME/wh_config.yaml" ]; then \
-		mkdir -p build/$$TARGET_NAME/target; \
-		python3 core/base/tools/config/wh_defgen.py $(CONFIG_DIR)/$$TARGET_NAME/ build/$$TARGET_NAME/target/wh_defs.yaml; \
+	TARGET_PATH=$$(echo ${GENERIC_TARGET_PATHS} | cut -d " " -f $$idx); \
+		echo "Generating complete design/configuration definition file, wh_defs.yaml"; \
+	if [ -f "$(CONFIG_DIR)/$$TARGET_PATH/wh_config.yaml" ]; then \
+			mkdir -p build/$$TARGET_PATH/target; \
+			python3 core/base/tools/config/wh_defgen.py $(CONFIG_DIR)/$$TARGET_PATH/ build/$$TARGET_PATH/target/wh_defs.yaml; \
 	fi; \
-	for buildtype in $(BUILD_TYPES); do \
-		if [ -d "$(CONFIG_DIR)/$$TARGET_NAME/$$buildtype" ]; then \
-			mkdir -p build/$$TARGET_NAME/$$buildtype; \
-			(cd build/$$TARGET_NAME/$$buildtype; \
-			cmake -DBUILDNAME:STRING=$$TARGET_NAME -DBUILDTYPE:STRING=$$buildtype -G"Eclipse CDT4 - Unix Makefiles" \
-			-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE CMAKE_BUILD_TYPE=Debug $(ROOT_DIR); \
-			$(MAKE) --no-print-directory); \
-		fi; \
-	done;
+		for buildtype in $(BUILD_TYPES); do \
+		if [ -d "$(CONFIG_DIR)/$$TARGET_PATH/$$buildtype" ]; then \
+				mkdir -p build/$$TARGET_PATH/$$buildtype; \
+				(cd build/$$TARGET_PATH/$$buildtype; \
+					/usr/bin/cmake -DBUILDNAME:STRING=$$TARGET_PATH -DBUILDTYPE:STRING=$$buildtype -G"Eclipse CDT4 - Unix Makefiles" \
+						-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE CMAKE_BUILD_TYPE=Debug $(ROOT_DIR); \
+					$(MAKE) --no-print-directory); \
+				fi \
+		done;
 	
+
 docs-doxygen: 
 	@echo 'Updating submodules'
 	git submodule update --init --recursive
@@ -152,6 +164,15 @@ python-env::
 	@echo 'Deactivate:                                                                     '
 	@echo '    deactivate                                                                  '
 	@echo '                                                                                '
+
+# Sample 'workspace' recipe
+full/pc-linux-workspace::
+	@echo 'Generating ground tools data.'
+	@make -C build/full/pc-linux/target ground-tools
+	@echo 'Generating Commander workspace.'
+	@python3 core/base/tools/commander/generate_workspace.py build/full/pc-linux/commander_workspace/etc/registry.yaml build/fixedwing/gemini2/commander_workspace/
+	@echo 'Generating XTCE'
+	@core/tools/auto-yamcs/src/generate_xtce.sh ${PWD}/build/full/pc-linux/target/wh_defs.yaml ${PWD}/build/fixedwing/gemini2/cpd/target/wh_defs.db ${PWD}/build/fixedwing/gemini2/commander_workspace/mdb/cpd.xml
 
 
 deploy::
