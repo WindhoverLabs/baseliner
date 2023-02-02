@@ -49,7 +49,6 @@ def add_module(module_name, prefix, config):
     if not module_name in config:
         print("" + module_name + " module not found.")
         print('')
-        print('error:  rc=' + return_code)
         print('*****************************************')
         return -1
 
@@ -58,7 +57,6 @@ def add_module(module_name, prefix, config):
     if not 'url' in module:
         print("" + module_name + " URL not defined.")
         print('')
-        print('error:  rc=' + return_code)
         print('*****************************************')
         return -1
     url = module['url']
@@ -66,7 +64,6 @@ def add_module(module_name, prefix, config):
     if not 'branch' in module:
         print("" + module_name + " branch not defined.")
         print('')
-        print('error:  rc=' + return_code)
         print('*****************************************')
         return -1
     branch = module['branch']
@@ -74,7 +71,6 @@ def add_module(module_name, prefix, config):
     if not 'path' in module:
         print("" + module_name + " path not defined.")
         print('')
-        print('error:  rc=' + return_code)
         print('*****************************************')
         return -1
     path = module['path']
@@ -82,7 +78,6 @@ def add_module(module_name, prefix, config):
     if not 'strategy' in module:
         print("" + module_name + " strategy not defined.")
         print('')
-        print('error:  rc=' + return_code)
         print('*****************************************')
         return -1
     strategy = module['strategy']
@@ -90,49 +85,42 @@ def add_module(module_name, prefix, config):
     # Add the module repo
     if strategy == 'subtree':
         remote_name = prefix + module_name
-        time.sleep(1);
         return_code = subprocess.call(["git", "remote", "add", "-f", remote_name, url])
         if return_code != 0:
             print('')
             print('error:  rc=' + return_code)
             print('*****************************************')
             return -1;
-        time.sleep(1);
         return_code = subprocess.call(["git", "subtree", "add", "--prefix", path, remote_name, branch, "--squash"])
         if return_code != 0:
             print('')
             print('*****************************************')
             return -1;
     elif strategy == 'submodule':
-        time.sleep(1);
         return_code = subprocess.call(["git", "submodule", "add", "-f", url, path])
         if return_code != 0:
             print('')
             print('error:  rc=' + return_code)
             print('*****************************************')
             return -1;
-        time.sleep(1);
         return_code = subprocess.call(["git", "submodule", "init"])
         if return_code != 0:
             print('')
             print('error:  rc=' + return_code)
             print('*****************************************')
             return -1;
-        time.sleep(1);
         return_code = subprocess.call(["git", "checkout", branch], cwd=path)
         if return_code != 0:
             print('')
             print('error:  rc=' + return_code)
             print('*****************************************')
             return -1;
-        time.sleep(1);
         return_code = subprocess.call(["git", "add", path])
         if return_code != 0:
             print('')
             print('error:  rc=' + return_code)
             print('*****************************************')
             return -1;
-        time.sleep(1);
         return_code = subprocess.call(["git", "commit", "-m", "Added submodule '" + path + "'"])
         if return_code != 0:
             print('')
