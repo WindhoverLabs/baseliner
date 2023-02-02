@@ -47,27 +47,37 @@ import subprocess
 def add_module(module_name, prefix, config):
     if not module_name in config:
         print("" + module_name + " module not found.")
+        print('')
+        print('*****************************************')
         return -1
 
     module = config[module_name]
 
     if not 'url' in module:
         print("" + module_name + " URL not defined.")
+        print('')
+        print('*****************************************')
         return -1
     url = module['url']
 
     if not 'branch' in module:
         print("" + module_name + " branch not defined.")
+        print('')
+        print('*****************************************')
         return -1
     branch = module['branch']
 
     if not 'path' in module:
         print("" + module_name + " path not defined.")
+        print('')
+        print('*****************************************')
         return -1
     path = module['path']
 
     if not 'strategy' in module:
         print("" + module_name + " strategy not defined.")
+        print('')
+        print('*****************************************')
         return -1
     strategy = module['strategy']
 
@@ -76,25 +86,39 @@ def add_module(module_name, prefix, config):
         remote_name = prefix + module_name
         return_code = subprocess.call(["git", "remote", "add", "-f", remote_name, url])
         if return_code != 0:
+            print('')
+            print('*****************************************')
             return -1;
         return_code = subprocess.call(["git", "subtree", "add", "--prefix", path, remote_name, branch, "--squash"])
         if return_code != 0:
+            print('')
+            print('*****************************************')
             return -1;
     elif strategy == 'submodule':
         return_code = subprocess.call(["git", "submodule", "add", "-f", url, path])
         if return_code != 0:
+            print('')
+            print('*****************************************')
             return -1;
         return_code = subprocess.call(["git", "submodule", "init"])
         if return_code != 0:
+            print('')
+            print('*****************************************')
             return -1;
         return_code = subprocess.call(["git", "checkout", branch], cwd=path)
         if return_code != 0:
+            print('')
+            print('*****************************************')
             return -1;
         return_code = subprocess.call(["git", "add", path])
         if return_code != 0:
+            print('')
+            print('*****************************************')
             return -1;
         return_code = subprocess.call(["git", "commit", "-m", "Added submodule '" + path + "'"])
         if return_code != 0:
+            print('')
+            print('*****************************************')
             return -1;
     else:
         print('Undefined strategy of ' + strategy)
@@ -125,7 +149,7 @@ def main():
                 print('OSAL module not found')
                 return -1
             for osal_name in config['core']['osal']:
-                result = add_module(osal_name, '', config['core']['osal'])
+                result = add_module(osal_name, 'core-osal-', config['core']['osal'])
                 if result != 0:
                     print('Failed to add osal module "' + osal_name + '"')
                     return result
@@ -134,7 +158,7 @@ def main():
                 print('PSP module not found')
                 return -1
             for psp_name in config['core']['psp']:
-                result = add_module(psp_name, '', config['core']['psp'])
+                result = add_module(psp_name, 'core-psp-', config['core']['psp'])
                 if result != 0:
                     print('Failed to add psp module "' + psp_name + '"')
                     return result
