@@ -46,6 +46,8 @@ import time
 
 
 def add_module(module_name, prefix, config):
+    max_retry = 3
+    
     if not module_name in config:
         print("" + module_name + " module not found.")
         print('')
@@ -86,59 +88,109 @@ def add_module(module_name, prefix, config):
     if strategy == 'subtree':
         remote_name = prefix + module_name
         print("git", "remote", "add", "-f", remote_name, url)
+        
         return_code = subprocess.call(["git", "remote", "add", "-f", remote_name, url])
         if return_code != 0:
             print('')
             print('error:  rc =',return_code)
             print('*****************************************')
             return -1;
-        print("git", "subtree", "add", "--prefix", path, remote_name, branch)
-        return_code = subprocess.call(["git", "subtree", "add", "--prefix", path, remote_name, branch])
-        if return_code != 0:
-            print('')
-            print('error:  rc =',return_code)
+        attempt = 0
+        while attempt < max_retry:
+            print("git", "subtree", "add", "--prefix", path, remote_name, branch)
+            return_code = subprocess.call(["git", "subtree", "add", "--prefix", path, remote_name, branch])
+            if return_code != 0:
+                print('')
+                print('error:  rc =',return_code)
+                attempt = attempt + 1
+                print('Retry attempt',attempt)
+            else
+                break
+        if attempt >= max_retry
             print('*****************************************')
             return -1;
     elif strategy == 'submodule':
-        print("git", "submodule", "add", "-f", url, path)
-        return_code = subprocess.call(["git", "submodule", "add", "-f", url, path])
-        if return_code != 0:
-            print('')
-            print('error:  rc =',return_code)
+        attempt = 0
+        while attempt < max_retry:
+            print("git", "submodule", "add", "-f", url, path)
+            return_code = subprocess.call(["git", "submodule", "add", "-f", url, path])
+            if return_code != 0:
+                print('')
+                print('error:  rc =',return_code)
+                attempt = attempt + 1
+                print('Retry attempt',attempt)
+            else
+                break
+        if attempt >= max_retry
             print('*****************************************')
             return -1;
-        print("git", "submodule", "init")
-        return_code = subprocess.call(["git", "submodule", "init"])
-        if return_code != 0:
-            print('')
-            print('error:  rc =',return_code)
+            
+        attempt = 0
+        while attempt < max_retry:
+            print("git", "submodule", "init")
+            return_code = subprocess.call(["git", "submodule", "init"])
+            if return_code != 0:
+                print('')
+                print('error:  rc =',return_code)
+                attempt = attempt + 1
+                print('Retry attempt',attempt)
+            else
+                break
+        if attempt >= max_retry
             print('*****************************************')
             return -1;
-        print("git", "checkout", branch)
-        return_code = subprocess.call(["git", "checkout", branch], cwd=path)
-        if return_code != 0:
-            print('')
-            print('error:  rc =',return_code)
+            
+        attempt = 0
+        while attempt < max_retry:
+            print("git", "checkout", branch)
+            return_code = subprocess.call(["git", "checkout", branch], cwd=path)
+            if return_code != 0:
+                print('')
+                print('error:  rc =',return_code)
+                attempt = attempt + 1
+                print('Retry attempt',attempt)
+            else
+                break
+        if attempt >= max_retry
             print('*****************************************')
             return -1;
-        print("git", "add", path)
-        return_code = subprocess.call(["git", "add", path])
-        if return_code != 0:
-            print('')
-            print('error:  rc =',return_code)
+            
+        attempt = 0
+        while attempt < max_retry:
+            print("git", "add", path)
+            return_code = subprocess.call(["git", "add", path])
+            if return_code != 0:
+                print('')
+                print('error:  rc =',return_code)
+                attempt = attempt + 1
+                print('Retry attempt',attempt)
+            else
+                break
+        if attempt >= max_retry
             print('*****************************************')
             return -1;
-        print("git", "commit", "-m", "Added submodule '" + path + "'")
-        return_code = subprocess.call(["git", "commit", "-m", "Added submodule '" + path + "'"])
-        if return_code != 0:
-            print('')
-            print('error:  rc =',return_code)
+            
+        attempt = 0
+        while attempt < max_retry:
+            print("git", "commit", "-m", "Added submodule '" + path + "'")
+            return_code = subprocess.call(["git", "commit", "-m", "Added submodule '" + path + "'"])
+            if return_code != 0:
+                print('')
+                print('error:  rc =',return_code)
+                attempt = attempt + 1
+                print('Retry attempt',attempt)
+            else
+                break
+        if attempt >= max_retry
             print('*****************************************')
             return -1;
     else:
         print('Undefined strategy of ' + strategy)
         return -1
 
+    print('')
+    print('*****************************************')
+            
     return 0
 
 
